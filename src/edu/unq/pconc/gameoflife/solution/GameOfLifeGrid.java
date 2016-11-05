@@ -8,9 +8,10 @@ import edu.unq.pconc.gameoflife.CellGrid;
 
 public class GameOfLifeGrid implements CellGrid{
 
-	private Map <Dimension,Cell> liveCells;
-	private Map <Dimension,Cell> nextLiveCells;
-	private Map <Dimension,Cell> checkedCells;
+	private Cells liveCells;
+	private Cells nextLiveCells;
+	private Cells checkedCells;
+
 	
 	private Dimension worldSize;
 	private int thds;
@@ -22,18 +23,17 @@ public class GameOfLifeGrid implements CellGrid{
 
 	@Override
 	public boolean getCell(int col, int row) {
-		return liveCells.containsKey(new Dimension(col,row));
+		return liveCells.isAlive(new Dimension(col,row));
 	}
 
 	@Override
 	public void setCell(int col, int row, boolean cell) {
 		Dimension dim = new Dimension(col, row);
 		if(cell && !getCell(col,row)){
-			liveCells.put(dim,new Cell(col,row));
-			
+			liveCells.addCell(dim,0);			
 		}else{
 			if(!cell){
-				liveCells.remove(dim);
+				liveCells.buryCell(dim);
 			}
 		}
 	}
@@ -46,35 +46,28 @@ public class GameOfLifeGrid implements CellGrid{
 	@Override
 	public void resize(int col, int row) {
 		if (!(col>=worldSize.getWidth() && row>=worldSize.getHeight())){
-			Map <Dimension,Cell> temp = transferLives(col,row);
-			liveCells.clear();
-			liveCells.putAll(temp);
+			Map <Dimension,Integer> temp = transferLives(col,row);
+			clear();
+			liveCells.addAllCells(temp);
 		}
 		worldSize = new Dimension(col,row);
-		
 	}
 	
 	private boolean fits (int col, int row, int posibleCol, int posibleRow ){
 		return  (0 <= posibleCol && posibleCol <= col ) && (0 <= posibleRow && posibleRow <= row ); 
 	}
 	
-	private Cell cloneCell(int col, int row, Cell celula){
-		Cell nueva = new Cell(col, row);
-		nueva.setVecinos(celula.getVecinos());
-		return nueva;
-	}
- 	
-	private Map <Dimension,Cell> transferLives(int newCol, int newRow) {
-		Map <Dimension,Cell> transfer = new HashMap<Dimension, Cell>();
+	private Map <Dimension,Integer> transferLives(int newCol, int newRow) {
+		Map <Dimension,Integer> transfer = new HashMap<Dimension, Integer>();
 		int deltaCol = (int) ((newCol - worldSize.getWidth())/2);
 		int deltaRow = (int) ((newRow - worldSize.getHeight())/2);
-		
-		for (Map.Entry<Dimension, Cell> entry : liveCells.entrySet()) {
+	
+		for (Map.Entry<Dimension, Integer> entry : liveCells.asSet()) {
 			int posibleCol = (int)entry.getKey().getWidth() + deltaCol;
 			int posibleRow = (int)entry.getKey().getHeight() + deltaRow;
 			
 			if (fits(newCol,newRow,posibleCol, posibleRow)){
-				transfer.put(new Dimension(posibleCol, posibleRow),cloneCell(posibleCol, posibleRow,entry.getValue()));
+				transfer.put(new Dimension(posibleCol, posibleRow),0);
 			}
 		}
 		return transfer;
@@ -84,7 +77,7 @@ public class GameOfLifeGrid implements CellGrid{
 	@Override
 	public void clear() {
 		liveCells.clear();
-		generation = 0;
+		this.generation = 0;
 	}
 
 	@Override
@@ -109,9 +102,9 @@ public class GameOfLifeGrid implements CellGrid{
 	@Override
 	public void next() {
 		nextLiveCells.clear();
-		generation++;
+		this.generation++;
 		
-		for (Map.Entry<Dimension, Cell> entry : liveCells.entrySet()) {
+		for (Map.Entry<Dimension, Integer> entry : liveCells.asSet()) {
 			
 		}
 		
