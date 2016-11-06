@@ -12,7 +12,6 @@ public class GameOfLifeGrid implements CellGrid{
 
 	private Cells liveCells;
 	private Cells nextLiveCells;
-	private Cells checkedCells;
 
 	
 	private Dimension worldSize;
@@ -87,12 +86,12 @@ public class GameOfLifeGrid implements CellGrid{
 		this.thds = threads;		
 	}
 
-	private List<Map<Dimension,Integer>> shareTheLoad() {
+	private List<Map<Dimension,Integer>> shareTheLoad(Map<Dimension,Integer> map) {
 		//this.thds;
 		List<Map<Dimension,Integer>> salida =new ArrayList <Map<Dimension,Integer>>();
-		salida.add(liveCells.getCells());
+		salida.add(map);
 		//for (Map.Entry<Dimension, Integer> entry: liveCells.asSet()){
-			
+			///  FALTAAAAAA
 		//}
 		return salida;
 	}
@@ -107,18 +106,18 @@ public class GameOfLifeGrid implements CellGrid{
 		nextLiveCells.clear();
 		this.generation++;
 
-		List cellsthread = shareTheLoad();
-		for (Map.Entry<Dimension, Integer> entry : liveCells.asSet()) {
-			
+		List<Map<Dimension, Integer>> cellshood = shareTheLoad(this.liveCells.getCells());
+		//Checkeo alrededor de los vivos, por posibles nuevas celulas. Para esto disparo threads Watchers
+		for (Map<Dimension,Integer> cells : cellshood) {
+			Watcher w= new Watcher(this.liveCells, cells, this.nextLiveCells);
+			w.start();
 		}
-		
-		/*
-		for (int i= 0 ; i < worldSize.getWidth(); i++){
-			for (int j= 0 ; j < worldSize.getHeight(); j++){
-				
-			}
-		}*/
-	
+
+		List<Map<Dimension, Integer>> nextGen = shareTheLoad(this.nextLiveCells.getCells());
+		for(Map<Dimension,Integer> next : nextGen){
+			Breeder god = new Breeder(this.liveCells, next, this.worldSize,this.nextLiveCells);
+			god.start();
+		}	
 	}
 
 }

@@ -36,5 +36,10 @@ public class Cells {
 	public Map <Dimension, Integer> getCells(){
 		return this.cells;
 	}
+
+	public void addCompanion(Dimension dim) {
+		this.cells.put(dim, this.cells.get(dim)+1);
+		
+	}
 	
 }
