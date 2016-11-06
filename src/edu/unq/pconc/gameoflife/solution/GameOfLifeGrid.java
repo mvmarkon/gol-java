@@ -1,7 +1,9 @@
 package edu.unq.pconc.gameoflife.solution;
 
 import java.awt.Dimension;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import edu.unq.pconc.gameoflife.CellGrid;
@@ -82,16 +84,17 @@ public class GameOfLifeGrid implements CellGrid{
 
 	@Override
 	public void setThreads(int threads) {
-		thds = threads;
-		
-		shareTheLoad();
-		
+		this.thds = threads;		
 	}
 
-	private void shareTheLoad() {
-		
-		
-
+	private List<Map<Dimension,Integer>> shareTheLoad() {
+		//this.thds;
+		List<Map<Dimension,Integer>> salida =new ArrayList <Map<Dimension,Integer>>();
+		salida.add(liveCells.getCells());
+		//for (Map.Entry<Dimension, Integer> entry: liveCells.asSet()){
+			
+		//}
+		return salida;
 	}
 
 	@Override
@@ -103,7 +106,8 @@ public class GameOfLifeGrid implements CellGrid{
 	public void next() {
 		nextLiveCells.clear();
 		this.generation++;
-		
+
+		List cellsthread = shareTheLoad();
 		for (Map.Entry<Dimension, Integer> entry : liveCells.asSet()) {
 			
 		}
