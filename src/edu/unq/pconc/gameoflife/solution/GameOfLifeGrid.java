@@ -10,7 +10,7 @@ import java.util.Set;
 
 import edu.unq.pconc.gameoflife.CellGrid;
 
-public class GameOfLifeGrid implements CellGrid {
+public class GameOfLifeGrid extends Thread implements CellGrid {
 
 	private Cells liveCells;
 	private Cells nextLiveCells;
@@ -124,7 +124,8 @@ public class GameOfLifeGrid implements CellGrid {
 		nextLiveCells.clear();
 		
 		this.generation++;
-
+		this.nextLiveCells.addAllCells(this.liveCells.getCells());
+		
 		List<Map<Dimension, Integer>> cellshood = shareTheLoad(this.liveCells.asSet());
 		//Checkeo alrededor de los vivos, por posibles nuevas celulas. Para esto disparo threads Watchers
 		for (Map<Dimension,Integer> cells : cellshood) {

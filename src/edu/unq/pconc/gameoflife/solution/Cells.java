@@ -53,17 +53,17 @@ public class Cells {
 		return this.cells;
 	}*/
 	public synchronized void clear() {
-			while (!canModify()){
-				waitingModifiers++;
-				try {
-					this.wait();
-				} catch (InterruptedException e) {
-					waitingModifiers--;
-					System.out.println("Excepcion en clear: " + e);
-					return;
-				}
+		while (!canModify()){
+			waitingModifiers++;
+			try {
+				this.wait();
+			} catch (InterruptedException e) {
 				waitingModifiers--;
+				System.out.println("Excepcion en clear: " + e);
+				return;
 			}
+			waitingModifiers--;
+		}
 		this.modifiers = 1;
 		this.cells.clear();
 		this.modifiers--;

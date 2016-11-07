@@ -11,12 +11,12 @@ public class Watcher extends Thread {
 	
 	public void run(){
 		for(Map.Entry<Dimension, Integer> entry : this.portionToWatch.entrySet()){
-			if(posibleNext.isAlive(entry.getKey())){
-				posibleNext.addCompanion(entry.getKey());
-			}else{
-				posibleNext.addCell(entry.getKey(),0);				
-			}
 			Dimension k = entry.getKey();
+//			if(posibleNext.isAlive(k)){
+//				posibleNext.addCompanion(k);
+//			}else{
+//				posibleNext.addCell(k,0);				
+//			}
 			setPosibles(k.getWidth()-1,k.getHeight()-1);
 			setPosibles(k.getWidth()-1,k.getHeight());
 			setPosibles(k.getWidth()-1,k.getHeight()+1);
@@ -33,8 +33,10 @@ public class Watcher extends Thread {
 		if (fits(dim)){
 			//Si entra en el tablero y se encuentra entre las vivas o entre las posibles aumento las lindantes
 			if (posibleNext.isAlive(dim)){
+				System.out.println("Ya esta y se agrega lindante: " + (int)dim.getWidth()+" - "+(int)dim.getHeight());
 				posibleNext.addCompanion(dim);
 			}else{
+				System.out.println("Podria vivir y se agrega lindante: " + (int)dim.getWidth()+" - "+(int)dim.getHeight());
 				posibleNext.addCell(dim,1);
 			}
 		}
