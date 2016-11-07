@@ -6,31 +6,30 @@ import java.util.Map;
 public class Breeder extends Thread{
 
 	private Cells alive;
-	private Dimension boundaries;
 	private Map<Dimension,Integer> portionToReGenerate;
 	private Cells posibleGen;
 
 	public void run(){
 		this.portionToReGenerate.forEach((k,v)->{
-			if(fits(k) && shouldLive(k,v)){
+			if(shouldLive(k,v)){
 				this.alive.addCell(k, 0);
+			}else{
+				if(this.alive.isAlive(k)){
+					this.alive.buryCell(k);
+				}
 			}
+			
 		});
 	}
 	
 	private boolean shouldLive(Dimension k, Integer v) {
-		//Si esta viva y linda con 2 o 3 celulas, o sis esta muerta y linda con 3 celulas vivas
-		return (this.alive.isAlive(k) && (v<=3 && v>=2))||(!this.alive.isAlive(k) && v== 3);
-	}
+		//Si esta viva y linda con 2 o 3 celulas, o si esta muerta y linda con 3 celulas vivas
+		boolean salida = ((this.alive.isAlive(k) && (v<=3 && v>=2)) || (!this.posibleGen.isAlive(k) && v== 3));
+		return salida;
+	}	
 	
-	private boolean fits(Dimension k){
-		return (k.getWidth()<=this.boundaries.getWidth() && k.getHeight()<=this.boundaries.getHeight());
-	}
-	
-	
-	public Breeder (Cells living, Map<Dimension, Integer> next, Dimension worldSize, Cells nextLiveCells){
+	public Breeder (Cells living, Map<Dimension, Integer> next, Cells nextLiveCells){
 		this.alive = living;
-		this.boundaries = worldSize;
 		this.posibleGen = nextLiveCells;
 		this.portionToReGenerate = next;
 	}
